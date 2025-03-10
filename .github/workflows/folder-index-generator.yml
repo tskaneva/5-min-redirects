@@ -98,7 +98,7 @@ jobs:
                   ${directories.map(dir => `<a href="${dir}/" class="folder-link">${dir}</a>`).join('\n                  ')}
               </div>
               <footer>
-                  Auto-generated on ${new Date().toLocaleDateString()}
+                  Auto-generated on ${new Date().getDate()}.${new Date().getMonth() + 1}.${new Date().getFullYear()}
               </footer>
           </body>
           </html>`;

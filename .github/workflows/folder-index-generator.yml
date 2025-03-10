@@ -1,0 +1,122 @@
+name: Generate Folder Index
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+          
+      - name: Generate index.html
+        run: |
+          # Create a script to generate the HTML file
+          cat > generate-index.js << 'EOF'
+          const fs = require('fs');
+          const path = require('path');
+          
+          // Get all directories in the root folder
+          const getDirectories = () => {
+            return fs.readdirSync('.', { withFileTypes: true })
+              .filter(dirent => dirent.isDirectory())
+              .filter(dirent => !dirent.name.startsWith('.')) // Exclude hidden directories
+              .map(dirent => dirent.name)
+              .sort();
+          };
+          
+          // Generate HTML
+          const generateHTML = (directories) => {
+            const html = `<!DOCTYPE html>
+          <html lang="en">
+          <head>
+              <meta charset="UTF-8">
+              <meta name="viewport" content="width=device-width, initial-scale=1.0">
+              <title>Tsvetelina Kaneva's 5 min exercises</title>
+              <style>
+                  body {
+                      font-family: 'Arial', sans-serif;
+                      line-height: 1.6;
+                      max-width: 800px;
+                      margin: 0 auto;
+                      padding: 20px;
+                      background-color: #f8f9fa;
+                      color: #333;
+                  }
+                  h1 {
+                      text-align: center;
+                      margin-bottom: 40px;
+                      color: #2c3e50;
+                      border-bottom: 2px solid #3498db;
+                      padding-bottom: 10px;
+                  }
+                  .folder-container {
+                      display: flex;
+                      flex-direction: column;
+                      align-items: center;
+                      gap: 20px;
+                  }
+                  .folder-link {
+                      display: inline-block;
+                      font-size: 1.2rem;
+                      text-decoration: none;
+                      color: #3498db;
+                      padding: 10px 20px;
+                      border-radius: 5px;
+                      background-color: #ffffff;
+                      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+                      transition: all 0.3s ease;
+                      width: 80%;
+                      text-align: center;
+                  }
+                  .folder-link:hover {
+                      background-color: #3498db;
+                      color: white;
+                      transform: translateY(-2px);
+                      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+                  }
+                  footer {
+                      margin-top: 50px;
+                      text-align: center;
+                      font-size: 0.9rem;
+                      color: #7f8c8d;
+                  }
+              </style>
+          </head>
+          <body>
+              <h1>Tsvetelina Kaneva's 5 min exercises</h1>
+              <div class="folder-container">
+                  ${directories.map(dir => `<a href="${dir}/" class="folder-link">${dir}</a>`).join('\n                  ')}
+              </div>
+              <footer>
+                  Auto-generated on ${new Date().toLocaleDateString()}
+              </footer>
+          </body>
+          </html>`;
+            
+            fs.writeFileSync('index.html', html);
+            console.log('index.html has been generated');
+          };
+          
+          const directories = getDirectories();
+          generateHTML(directories);
+          EOF
+          
+          # Execute the script
+          node generate-index.js
+          
+      - name: Commit and push if changed
+        run: |
+          git config --global user.name 'GitHub Action'
+          git config --global user.email 'action@github.com'
+          git add index.html
+          git diff --quiet && git diff --staged --quiet || (git commit -m "Update index.html with folder listing" && git push)

@@ -1,10 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta http-equiv="refresh" content="0; url=https://forms.gle/rHUWY96fEEbDf2bo6">
+    <script>
+        var redirectUrl = "https://forms.gle/rHUWY96fEEbDf2bo6";
+        window.location.href = redirectUrl;
+    </script>
     <title>Redirecting...</title>
 </head>
 <body>
-    <p>If you are not redirected, <a href="https://your-destination-link.com">click here</a>.</p>
+    <p>If you are not redirected, <a id="redirect-link" href="#">click here</a>.</p>
+    <script>
+        document.getElementById("redirect-link").href = redirectUrl;
+    </script>
 </body>
 </html>

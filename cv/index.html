@@ -1,10 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta http-equiv="refresh" content="0; url=https://docs.google.com/forms/d/e/1FAIpQLSdRtpuWjpY0fMmzeU6FsYQQWm3ycyzXDJSQ3L_Fh8UOhHRa8Q/viewform?usp=dialog">
+    <script>
+        var redirectUrl = "https://docs.google.com/forms/d/e/1FAIpQLSdRtpuWjpY0fMmzeU6FsYQQWm3ycyzXDJSQ3L_Fh8UOhHRa8Q/viewform?usp=dialog";
+        window.location.href = redirectUrl;
+    </script>
     <title>Redirecting...</title>
 </head>
 <body>
-    <p>If you are not redirected, <a href="https://docs.google.com/forms/d/e/1FAIpQLSdRtpuWjpY0fMmzeU6FsYQQWm3ycyzXDJSQ3L_Fh8UOhHRa8Q/viewform?usp=dialog">click here</a>.</p>
+    <p>If you are not redirected, <a id="redirect-link" href="#">click here</a>.</p>
+    <script>
+        document.getElementById("redirect-link").href = redirectUrl;
+    </script>
 </body>
 </html>

@@ -18,9 +18,9 @@ jobs:
         with:
           node-version: '16'
           
-      - name: Generate index.html
+      - name: Generate index.html and README.md
         run: |
-          # Create a script to generate the HTML file
+          # Create a script to generate the HTML and README files
           cat > generate-index.js << 'EOF'
           const fs = require('fs');
           const path = require('path');
@@ -107,8 +107,55 @@ jobs:
             console.log('index.html has been generated');
           };
           
+          // Generate README.md
+          const generateReadme = (directories) => {
+            const date = new Date();
+            const formattedDate = `${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()}`;
+            
+            // Check if README.md exists
+            let existingContent = '';
+            try {
+              existingContent = fs.readFileSync('README.md', 'utf8');
+            } catch (error) {
+              // If README doesn't exist, create a new one
+              const markdown = `# Tsvetelina Kaneva's 5 min exercises
+
+<!-- [links] -->
+${directories.map(dir => `- [${dir}](${dir}/)`).join('\n')}
+<!-- [/links] -->
+
+---
+
+Auto-generated on ${formattedDate}
+`;
+              fs.writeFileSync('README.md', markdown);
+              console.log('New README.md has been generated');
+              return;
+            }
+            
+            // Check if the [links] tag exists
+            const linksTagRegex = /<!-- \[links\] -->([\s\S]*?)<!-- \[\/links\] -->/;
+            const folderLinks = directories.map(dir => `- [${dir}](${dir}/)`).join('\n');
+            
+            if (linksTagRegex.test(existingContent)) {
+              // Replace content between tags
+              const updatedContent = existingContent.replace(
+                linksTagRegex, 
+                `<!-- [links] -->\n${folderLinks}\n<!-- [/links] -->`
+              );
+              fs.writeFileSync('README.md', updatedContent);
+            } else {
+              // Add tags and links if they don't exist
+              const updatedContent = existingContent + `\n\n<!-- [links] -->\n${folderLinks}\n<!-- [/links] -->\n\n---\n\nAuto-generated on ${formattedDate}\n`;
+              fs.writeFileSync('README.md', updatedContent);
+            }
+            
+            console.log('README.md has been updated with folder links');
+          };
+          
           const directories = getDirectories();
           generateHTML(directories);
+          generateReadme(directories);
           EOF
           
           # Execute the script
@@ -118,8 +165,8 @@ jobs:
         run: |
           git config --global user.name 'GitHub Action'
           git config --global user.email 'action@github.com'
-          git add index.html
-          git diff --quiet && git diff --staged --quiet || (git commit -m "Update index.html with folder listing")
+          git add index.html README.md
+          git diff --quiet && git diff --staged --quiet || (git commit -m "Update index.html and README.md with folder listing")
           
       - name: Push changes
         uses: ad-m/github-push-action@master

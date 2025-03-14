@@ -16,7 +16,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '16'
+          node-version: '20'
           
       - name: Generate index.html and README.md
         run: |
@@ -131,8 +131,8 @@ jobs:
             const outputPath = existingReadmePath || 'README.md';
             console.log('Will write to: ' + outputPath);
             
-            // Prepare links content
-            const folderLinks = directories.map(dir => '- [' + dir + '](' + dir + '/)').join('\n');
+            // Prepare links content with domain prepended to URLs
+            const folderLinks = directories.map(dir => '- [' + dir + '](https://5-mins.tskaneva.com/' + dir + '/)').join('\n');
             
             // If no README exists, create a new one
             if (!existingReadmePath) {

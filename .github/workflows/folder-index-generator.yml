@@ -112,12 +112,30 @@ jobs:
             const date = new Date();
             const formattedDate = `${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()}`;
             
-            // Check if README.md exists
+            // Check for different README filename variations (case sensitivity)
+            const readmeVariations = ['README.md', 'readme.md', 'Readme.md'];
+            let existingReadmePath = null;
             let existingContent = '';
-            try {
-              existingContent = fs.readFileSync('README.md', 'utf8');
-            } catch (error) {
-              // If README doesn't exist, create a new one
+            
+            // Find if any README variation exists
+            for (const readmeName of readmeVariations) {
+              try {
+                if (fs.existsSync(readmeName)) {
+                  existingReadmePath = readmeName;
+                  existingContent = fs.readFileSync(readmeName, 'utf8');
+                  console.log(`Found existing README at: ${readmeName}`);
+                  break;
+                }
+              } catch (error) {
+                // Continue checking other variations
+              }
+            }
+            
+            // Default output path - prefer existing one or fallback to README.md
+            const outputPath = existingReadmePath || 'README.md';
+            
+            // If no README exists, create a new one
+            if (!existingReadmePath) {
               const markdown = `# Tsvetelina Kaneva's 5 min exercises
 
 <!-- [links] -->
@@ -128,8 +146,8 @@ ${directories.map(dir => `- [${dir}](${dir}/)`).join('\n')}
 
 Auto-generated on ${formattedDate}
 `;
-              fs.writeFileSync('README.md', markdown);
-              console.log('New README.md has been generated');
+              fs.writeFileSync(outputPath, markdown);
+              console.log(`New ${outputPath} has been generated`);
               return;
             }
             
@@ -143,14 +161,14 @@ Auto-generated on ${formattedDate}
                 linksTagRegex, 
                 `<!-- [links] -->\n${folderLinks}\n<!-- [/links] -->`
               );
-              fs.writeFileSync('README.md', updatedContent);
+              fs.writeFileSync(outputPath, updatedContent);
             } else {
               // Add tags and links if they don't exist
               const updatedContent = existingContent + `\n\n<!-- [links] -->\n${folderLinks}\n<!-- [/links] -->\n\n---\n\nAuto-generated on ${formattedDate}\n`;
-              fs.writeFileSync('README.md', updatedContent);
+              fs.writeFileSync(outputPath, updatedContent);
             }
             
-            console.log('README.md has been updated with folder links');
+            console.log(`${outputPath} has been updated with folder links`);
           };
           
           const directories = getDirectories();
@@ -165,7 +183,7 @@ Auto-generated on ${formattedDate}
         run: |
           git config --global user.name 'GitHub Action'
           git config --global user.email 'action@github.com'
-          git add index.html README.md
+          git add index.html README.md readme.md Readme.md
           git diff --quiet && git diff --staged --quiet || (git commit -m "Update index.html and README.md with folder listing")
           
       - name: Push changes

@@ -1,5 +1,6 @@
 ## Links:
 
 <!-- [links] -->
-Your links will be placed here automatically
+- [cv](cv/)
+- [oop](oop/)
 <!-- [/links] -->

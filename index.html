@@ -1,68 +1,65 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bg">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tsvetelina Kaneva's 5 min exercises</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <title>Tsvetelina Kaneva's 5 min questions</title>
     <style>
         body {
-            font-family: 'Arial', sans-serif;
+            /* font-family: 'Arial', sans-serif; */
             line-height: 1.6;
             max-width: 800px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 40px !important;
             background-color: #f8f9fa;
             color: #333;
         }
         h1 {
-            text-align: center;
-            margin-bottom: 40px;
-            color: #2c3e50;
-            border-bottom: 2px solid #3498db;
-            padding-bottom: 10px;
-        }
-        .folder-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 20px;
-        }
-        .folder-link {
-            display: inline-block;
-            font-size: 1.2rem;
-            text-decoration: none;
-            color: #3498db;
-            padding: 10px 20px;
-            border-radius: 5px;
-            background-color: #ffffff;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            transition: all 0.3s ease;
-            width: 80%;
-            text-align: center;
-        }
-        .folder-link:hover {
-            background-color: #3498db;
-            color: white;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            font-family: "Raleway", sans-serif !important;
+            font-optical-sizing: auto;
+            font-weight: 500;
         }
         footer {
             margin-top: 50px;
             text-align: center;
             font-size: 0.9rem;
             color: #7f8c8d;
+            font-family: "Raleway", sans-serif;
+            font-optical-sizing: auto;
+            font-weight: 400;
+            font-style: normal;
+        }
+        .folder-link{
+            font-family: "Raleway", sans-serif !important;    
         }
     </style>
 </head>
 <body>
-    <h1>Tsvetelina Kaneva's 5 min exercises</h1>
-    <div class="folder-container">
-        <a href="cv/" class="folder-link">cv</a>
-                  <a href="db/" class="folder-link">db</a>
-                  <a href="oop/" class="folder-link">oop</a>
-    </div>
+    <h1 class="text-4xl text-center font-bold my-[40px]">Tsvetelina Kaneva's 5 min questions</h1>
+    
+    <div class="flex justify-center gap-4 p-4">
+        <a href="oop/" class="folder-link relative h-[150px] w-[250px] bg-cover bg-center text-white shadow-lg rounded-lg overflow-hidden" style="background-image: url('https://images.unsplash.com/photo-1515879218367-8466d910aaa4?q=80&w=2669&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');">
+            <div class="absolute inset-0 bg-black/25 hover:bg-black/40 transition-all duration-300"></div>  
+            <span class="absolute bottom-2 left-0 w-full text-center text-lg ">Обектно-ориентирано програмиране</span>
+          </a>
+      
+        <a href="db/" class="folder-link relative h-[150px] w-[250px] bg-cover bg-center text-white shadow-lg rounded-lg overflow-hidden" style="background-image: url('https://images.unsplash.com/photo-1662026911591-335639b11db6?q=80&w=1462&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');">
+          <div class="absolute inset-0 bg-black/25 hover:bg-black/40 transition-all duration-300"></div>  
+          <span class="absolute bottom-2 left-0 w-full text-center text-lg ">Бази данни</span>
+        </a>
+      
+        <a href="cv/" class="folder-link relative h-[150px] w-[250px] bg-cover bg-center text-white shadow-lg rounded-lg overflow-hidden" style="background-image: url('https://images.unsplash.com/photo-1634320714682-ae8b9c9cee60?q=80&w=2100&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');">
+            <div class="absolute inset-0 bg-black/25 hover:bg-black/40 transition-all duration-300"></div>  
+            <span class="absolute bottom-2 left-0 w-full text-center text-lg ">Компютърно зрение</span>
+          </a>
+      </div>
     <footer>
-        Auto-generated on 18.3.2025
+        Auto-generated on 17.3.2025
     </footer>
 </body>
 </html>

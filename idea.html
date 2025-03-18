@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Redirecting...</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      text-align: center;
+      margin-top: 100px;
+      background-color: #f8f9fa;
+      color: #333;
+    }
+
+    .manual-redirect {
+      display: inline-block;
+      margin-top: 20px;
+      padding: 10px 20px;
+      background-color: #3498db;
+      color: white;
+      text-decoration: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .manual-redirect:hover {
+      background-color: #2980b9;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Redirecting you to the form...</h1>
+  <p>Please wait a moment.</p>
+  <div class="manual-redirect" id="manual-link">Click here if you're not redirected automatically</div>
+
+  <script>
+    // Redirector implementation
+    (function () {
+      // Data string (change this to redirect to a different URL)
+      // Current data is for: https://forms.gle/Ft42GujVX1drHisi6
+      var _0x5e86 = ['\x41\x42\x43\x44\x45\x46\x47\x48\x49\x4a\x4b\x4c\x4d\x4e\x4f\x50\x51\x52\x53\x54\x55\x56\x57\x58\x59\x5a\x61\x62\x63\x64\x65\x66\x67\x68\x69\x6a\x6b\x6c\x6d\x6e\x6f\x70\x71\x72\x73\x74\x75\x76\x77\x78\x79\x7a\x30\x31\x32\x33\x34\x35\x36\x37\x38\x39\x2b\x2f\x3d', '\x63\x68\x61\x72\x41\x74', '\x69\x6e\x64\x65\x78\x4f\x66', '\x66\x72\x6f\x6d\x43\x68\x61\x72\x43\x6f\x64\x65', '\x6c\x65\x6e\x67\x74\x68', 'aHR0cHM6Ly9mb3Jtcy5nbGUvRnQ0Mkd1alZYMWRySGlzaTY='];
+
+      // Decoding mechanism
+      var _0xc93c = function (_0x4bd822) {
+        var _0x35c69f = '', _0x3a0883, _0x43c1b2, _0x1e230a, _0x2e925d, _0x19aad1, _0x4ce2f1, _0x365ce9, _0x5a5c20 = 0;
+        while (_0x5a5c20 < _0x4bd822[_0x5e86[4]]) {
+          _0x2e925d = _0x5e86[0][_0x5e86[2]](_0x4bd822[_0x5e86[1]](_0x5a5c20++));
+          _0x19aad1 = _0x5e86[0][_0x5e86[2]](_0x4bd822[_0x5e86[1]](_0x5a5c20++));
+          _0x4ce2f1 = _0x5e86[0][_0x5e86[2]](_0x4bd822[_0x5e86[1]](_0x5a5c20++));
+          _0x365ce9 = _0x5e86[0][_0x5e86[2]](_0x4bd822[_0x5e86[1]](_0x5a5c20++));
+          _0x3a0883 = (_0x2e925d << 2) | (_0x19aad1 >> 4);
+          _0x43c1b2 = ((_0x19aad1 & 15) << 4) | (_0x4ce2f1 >> 2);
+          _0x1e230a = ((_0x4ce2f1 & 3) << 6) | _0x365ce9;
+          _0x35c69f = _0x35c69f + String[_0x5e86[3]](_0x3a0883);
+          if (_0x4ce2f1 != 64) {
+            _0x35c69f = _0x35c69f + String[_0x5e86[3]](_0x43c1b2);
+          }
+          if (_0x365ce9 != 64) {
+            _0x35c69f = _0x35c69f + String[_0x5e86[3]](_0x1e230a);
+          }
+        }
+        return _0x35c69f;
+      };
+
+      // Process redirect with delayed execution
+      setTimeout(function () {
+        var finalUrl = _0xc93c(_0x5e86[5]);
+
+        // Set up manual redirect
+        document.getElementById("manual-link").addEventListener("click", function () {
+          window.location.href = finalUrl;
+        });
+
+        // Auto redirect after delay
+        setTimeout(function () {
+          window.location.href = finalUrl;
+        }, 1500);
+      }, 300);
+    })();
+  </script>
+</body>
+
+</html>

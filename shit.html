@@ -42,9 +42,9 @@
       // Data string (change this to redirect to a different URL)
       // Current data is for: https://forms.gle/Ft42GujVX1drHisi6
       //To change the URL:
-// Generate base64 with: btoa("https://your-new-url.com")
-// Replace the string in _0x5e86[5] with your encoded URL
-      var _0x5e86 = ['\x41\x42\x43\x44\x45\x46\x47\x48\x49\x4a\x4b\x4c\x4d\x4e\x4f\x50\x51\x52\x53\x54\x55\x56\x57\x58\x59\x5a\x61\x62\x63\x64\x65\x66\x67\x68\x69\x6a\x6b\x6c\x6d\x6e\x6f\x70\x71\x72\x73\x74\x75\x76\x77\x78\x79\x7a\x30\x31\x32\x33\x34\x35\x36\x37\x38\x39\x2b\x2f\x3d', '\x63\x68\x61\x72\x41\x74', '\x69\x6e\x64\x65\x78\x4f\x66', '\x66\x72\x6f\x6d\x43\x68\x61\x72\x43\x6f\x64\x65', '\x6c\x65\x6e\x67\x74\x68', 'aHR0cHM6Ly9mb3Jtcy5nbGUvRnQ0Mkd1alZYMWRySGlzaTY='];
+      // Generate base64 with: btoa("https://your-new-url.com")
+      // Replace the string in _0x5e86[5] with your encoded URL
+      var _0x5e86 = ['\x41\x42\x43\x44\x45\x46\x47\x48\x49\x4a\x4b\x4c\x4d\x4e\x4f\x50\x51\x52\x53\x54\x55\x56\x57\x58\x59\x5a\x61\x62\x63\x64\x65\x66\x67\x68\x69\x6a\x6b\x6c\x6d\x6e\x6f\x70\x71\x72\x73\x74\x75\x76\x77\x78\x79\x7a\x30\x31\x32\x33\x34\x35\x36\x37\x38\x39\x2b\x2f\x3d', '\x63\x68\x61\x72\x41\x74', '\x69\x6e\x64\x65\x78\x4f\x66', '\x66\x72\x6f\x6d\x43\x68\x61\x72\x43\x6f\x64\x65', '\x6c\x65\x6e\x67\x74\x68', 'YXNkYXNkYXNkYWRz'];
 
       // Decoding mechanism
       var _0xc93c = function (_0x4bd822) {
@@ -68,20 +68,16 @@
         return _0x35c69f;
       };
 
-      // Process redirect with delayed execution
-      setTimeout(function () {
-        var finalUrl = _0xc93c(_0x5e86[5]);
+      // Process redirect immediately
+      var finalUrl = _0xc93c(_0x5e86[5]);
 
-        // Set up manual redirect
-        document.getElementById("manual-link").addEventListener("click", function () {
-          window.location.href = finalUrl;
-        });
+      // Set up manual redirect
+      document.getElementById("manual-link").addEventListener("click", function () {
+        window.location.href = finalUrl;
+      });
 
-        // Auto redirect after delay
-        setTimeout(function () {
-          window.location.href = finalUrl;
-        }, 1500);
-      }, 300);
+      // Auto redirect immediately
+      window.location.href = finalUrl;
     })();
   </script>
 </body>

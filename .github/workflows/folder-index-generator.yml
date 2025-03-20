@@ -1,13 +1,27 @@
-name: Generate Folder Index
+name: Generate Folder Index and Deploy to Pages
 
 on:
   push:
     branches: [ main ]
   workflow_dispatch:
 
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     
     steps:
       - name: Checkout repository
@@ -34,72 +48,82 @@ jobs:
               .sort();
           };
           
+          // Check if a background image exists in the folder
+          const getBackgroundImageForFolder = (folderName) => {
+            const backgroundPath = path.join(folderName, 'background.jpg');
+            if (fs.existsSync(backgroundPath)) {
+              return `${folderName}/background.jpg`;
+            }
+            
+            // Use the default background from .github/img/background.jpg
+            const defaultBackgroundPath = '.github/img/background.jpg';
+            if (fs.existsSync(defaultBackgroundPath)) {
+              return defaultBackgroundPath;
+            }
+            
+            // If even the default is missing, return a placeholder
+            return 'data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22250%22%20height%3D%22150%22%20viewBox%3D%220%200%20250%20150%22%20preserveAspectRatio%3D%22none%22%3E%3Cdefs%3E%3Cstyle%20type%3D%22text%2Fcss%22%3E%23holder_18cc3c8ac91%20text%20%7B%20fill%3Argba(255%2C255%2C255%2C.75)%3Bfont-weight%3Anormal%3Bfont-family%3AHelvetica%2C%20monospace%3Bfont-size%3A13pt%20%7D%20%3C%2Fstyle%3E%3C%2Fdefs%3E%3Cg%20id%3D%22holder_18cc3c8ac91%22%3E%3Crect%20width%3D%22250%22%20height%3D%22150%22%20fill%3D%22%23777%22%3E%3C%2Frect%3E%3Cg%3E%3Ctext%20x%3D%2285%22%20y%3D%2280%22%3ENot%20Found%3C%2Ftext%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E';
+          };
+          
+          // Get folder names from config file in the root directory
+          const getFolderNameBg = (folderName) => {
+            // Try to load from subjects-names.json in the root
+            const configPath = 'subjects-names.json';
+            if (fs.existsSync(configPath)) {
+              try {
+                const namesConfig = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+                if (namesConfig[folderName]) {
+                  return namesConfig[folderName];
+                }
+              } catch (error) {
+                console.error('Error reading subjects names config:', error);
+              }
+            }
+            
+            // If no name found in config, just return the folder name itself
+            return folderName;
+          };
+          
           // Generate HTML
           const generateHTML = (directories) => {
             const html = `<!DOCTYPE html>
-          <html lang="en">
+          <html lang="bg">
           <head>
               <meta charset="UTF-8">
               <meta name="viewport" content="width=device-width, initial-scale=1.0">
+              <link rel="preconnect" href="https://fonts.googleapis.com">
+              <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+              <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+              <link href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
               <title>Tsvetelina Kaneva's 5 min exercises</title>
               <style>
                   body {
-                      font-family: 'Arial', sans-serif;
-                      line-height: 1.6;
-                      max-width: 800px;
-                      margin: 0 auto;
-                      padding: 20px;
-                      background-color: #f8f9fa;
-                      color: #333;
+                      font-family: 'Raleway', sans-serif;
                   }
-                  h1 {
-                      text-align: center;
-                      margin-bottom: 40px;
-                      color: #2c3e50;
-                      border-bottom: 2px solid #3498db;
-                      padding-bottom: 10px;
-                  }
-                  .folder-container {
-                      display: flex;
-                      flex-direction: column;
-                      align-items: center;
-                      gap: 20px;
-                  }
-                  .folder-link {
-                      display: inline-block;
-                      font-size: 1.2rem;
-                      text-decoration: none;
-                      color: #3498db;
-                      padding: 10px 20px;
-                      border-radius: 5px;
-                      background-color: #ffffff;
-                      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-                      transition: all 0.3s ease;
-                      width: 80%;
-                      text-align: center;
-                  }
-                  .folder-link:hover {
-                      background-color: #3498db;
-                      color: white;
-                      transform: translateY(-2px);
-                      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-                  }
-                  footer {
-                      margin-top: 50px;
-                      text-align: center;
-                      font-size: 0.9rem;
-                      color: #7f8c8d;
+                  .content {
+                      opacity: 1;
+                      transition: opacity 0.5s ease;
                   }
               </style>
           </head>
           <body>
-              <h1>Tsvetelina Kaneva's 5 min exercises</h1>
-              <div class="folder-container">
-                  ${directories.map(dir => `<a href="${dir}/" class="folder-link">${dir}</a>`).join('\n                  ')}
+              <div class="content" id="main-content">
+                  <h1 class="text-4xl text-center font-bold my-[40px]">Tsvetelina Kaneva's 5 min questions</h1>
+                  
+                  <div class="flex flex-wrap justify-center gap-4 p-4">
+                      ${directories.map(dir => {
+                        const bgImage = getBackgroundImageForFolder(dir);
+                        const folderNameBg = getFolderNameBg(dir);
+                        return `<a href="${dir}/" class="folder-link relative h-[150px] w-[250px] bg-cover bg-center text-white shadow-lg rounded-lg overflow-hidden" style="background-image: url('${bgImage}');">
+                            <div class="absolute inset-0 bg-black/25 hover:bg-black/40 transition-all duration-300"></div>  
+                            <span class="absolute bottom-2 left-0 w-full text-center text-lg ">${folderNameBg}</span>
+                          </a>`;
+                      }).join('\n                      ')}
+                  </div>
+                  <footer class="text-center text-gray-500 mt-10 text-sm">
+                      Auto-generated on ${new Date().getDate()}.${new Date().getMonth() + 1}.${new Date().getFullYear()}
+                  </footer>
               </div>
-              <footer>
-                  Auto-generated on ${new Date().getDate()}.${new Date().getMonth() + 1}.${new Date().getFullYear()}
-              </footer>
           </body>
           </html>`;
             
@@ -138,6 +162,7 @@ jobs:
             if (!existingReadmePath) {
               console.log('No existing README found, creating new one');
               const markdown = '# Tsvetelina Kaneva\'s 5 min exercises\n\n' +
+                               '## Links:\n\n' +
                                '<!-- [links] -->\n' +
                                folderLinks + '\n' +
                                '<!-- [/links] -->\n\n' +
@@ -164,7 +189,8 @@ jobs:
               console.log('No [links] tag found in README, appending to the end');
               // Add tags and links if they don't exist
               const updatedContent = existingContent + 
-                                    '\n\n<!-- [links] -->\n' + 
+                                    '\n\n## Links:\n\n' +
+                                    '<!-- [links] -->\n' + 
                                     folderLinks + 
                                     '\n<!-- [/links] -->\n\n---\n\n' +
                                     'Auto-generated on ' + formattedDate;
@@ -193,9 +219,18 @@ jobs:
           if [ -f "Readme.md" ]; then git add Readme.md; fi
           # Check if there are changes to commit
           git diff --quiet && git diff --staged --quiet || (git commit -m "Update index.html and README files with folder listing")
+          git push origin main
           
-      - name: Push changes
-        uses: ad-m/github-push-action@master
+      # Pages deployment steps
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+        
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: ${{ github.ref }}
+          # Upload entire repository
+          path: '.'
+          
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

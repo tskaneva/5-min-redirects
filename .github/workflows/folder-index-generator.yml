@@ -1,13 +1,27 @@
-name: Generate Folder Index
+name: Generate Folder Index and Deploy to Pages
 
 on:
   push:
     branches: [ main ]
   workflow_dispatch:
 
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     
     steps:
       - name: Checkout repository
@@ -81,53 +95,18 @@ jobs:
               <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
               <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
               <link href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+              <title>Tsvetelina Kaneva's 5 min exercises</title>
               <style>
-                  #loading {
-                      display: flex;
-                      justify-content: center;
-                      align-items: center;
-                      height: 100vh;
-                      width: 100%;
-                      position: fixed;
-                      top: 0;
-                      left: 0;
-                      background-color: rgba(255, 255, 255, 0.9);
-                      z-index: 1000;
+                  body {
+                      font-family: 'Raleway', sans-serif;
                   }
-                  
-                  #access-denied {
-                      display: none;
-                      text-align: center;
-                      height: 100vh;
-                      width: 100%;
-                      position: fixed;
-                      top: 0;
-                      left: 0;
-                      background-color: rgba(255, 255, 255, 0.95);
-                      z-index: 999;
-                      padding-top: 20vh;
-                  }
-                  
                   .content {
-                      opacity: 0;
+                      opacity: 1;
                       transition: opacity 0.5s ease;
                   }
               </style>
           </head>
           <body>
-              <div id="loading" class="bg-white">
-                  <div class="text-center">
-                      <p class="text-xl font-semibold mb-2">Verifying access...</p>
-                      <div class="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
-                  </div>
-              </div>
-              
-              <div id="access-denied" class="bg-white">
-                  <h2 class="text-3xl font-bold text-red-600 mb-4">Access Denied</h2>
-                  <p class="text-xl mb-2">You are not authorized to view this website.</p>
-                  <p id="visitor-ip" class="text-gray-600"></p>
-              </div>
-              
               <div class="content" id="main-content">
                   <h1 class="text-4xl text-center font-bold my-[40px]">Tsvetelina Kaneva's 5 min questions</h1>
                   
@@ -145,45 +124,6 @@ jobs:
                       Auto-generated on ${new Date().getDate()}.${new Date().getMonth() + 1}.${new Date().getFullYear()}
                   </footer>
               </div>
-              
-              <script>
-                  document.addEventListener('DOMContentLoaded', async function() {
-                      // List of allowed IPs - replace with your actual allowed IPs
-                      const allowedIPs = [
-                          '123.456.789.101',
-                          '234.567.890.123',
-                          '345.678.901.234'
-                          // Add more IPs as needed
-                      ];
-                      
-                      try {
-                          // Fetch the visitor's IP from an API
-                          const response = await fetch('https://api.ipify.org?format=json');
-                          const data = await response.json();
-                          const visitorIP = data.ip;
-                          
-                          // Display visitor's IP
-                          document.getElementById('visitor-ip').textContent = 'Your IP: ' + visitorIP;
-                          
-                          // Check if visitor's IP is allowed
-                          if (allowedIPs.includes(visitorIP)) {
-                              // Show content
-                              document.getElementById('loading').style.display = 'none';
-                              document.getElementById('main-content').style.opacity = '1';
-                          } else {
-                              // Show access denied
-                              document.getElementById('loading').style.display = 'none';
-                              document.getElementById('access-denied').style.display = 'block';
-                          }
-                      } catch (error) {
-                          console.error('Error checking IP:', error);
-                          
-                          // Fallback: show content in case of error
-                          document.getElementById('loading').style.display = 'none';
-                          document.getElementById('main-content').style.opacity = '1';
-                      }
-                  });
-              </script>
           </body>
           </html>`;
             
@@ -222,6 +162,7 @@ jobs:
             if (!existingReadmePath) {
               console.log('No existing README found, creating new one');
               const markdown = '# Tsvetelina Kaneva\'s 5 min exercises\n\n' +
+                               '## Links:\n\n' +
                                '<!-- [links] -->\n' +
                                folderLinks + '\n' +
                                '<!-- [/links] -->\n\n' +
@@ -248,7 +189,8 @@ jobs:
               console.log('No [links] tag found in README, appending to the end');
               // Add tags and links if they don't exist
               const updatedContent = existingContent + 
-                                    '\n\n<!-- [links] -->\n' + 
+                                    '\n\n## Links:\n\n' +
+                                    '<!-- [links] -->\n' + 
                                     folderLinks + 
                                     '\n<!-- [/links] -->\n\n---\n\n' +
                                     'Auto-generated on ' + formattedDate;
@@ -277,9 +219,18 @@ jobs:
           if [ -f "Readme.md" ]; then git add Readme.md; fi
           # Check if there are changes to commit
           git diff --quiet && git diff --staged --quiet || (git commit -m "Update index.html and README files with folder listing")
+          git push origin main
           
-      - name: Push changes
-        uses: ad-m/github-push-action@master
+      # Pages deployment steps
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+        
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: ${{ github.ref }}
+          # Upload entire repository
+          path: '.'
+          
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

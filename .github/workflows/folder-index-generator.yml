@@ -75,8 +75,8 @@ jobs:
           
           // Get folder names from config file in the root directory
           const getFolderNameBg = (folderName) => {
-            // Try to load from subjects-names.json ONLY in the root
-            const configPath = 'subjects-names.json';
+            // Try to load from subjects-name.json ONLY in the root
+            const configPath = 'subjects-name.json';
             console.log(`Checking for subject names at: ${configPath}`);
             if (fs.existsSync(configPath)) {
               try {
